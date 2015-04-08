@@ -34,13 +34,13 @@ class Player
 	int y;
 	int lives;
 	int dirx, diry;
-	bool winner;
+	bool isWinner;
 	int targetNum;
 
 	// TODO: create 'Point' class, and point data member instead of 2 ints
 public:
 	Player(char body = '*', int x = 0, int y = 0, int dirx = 0, int diry = 0, int score = 0, int lives = 3, bool winner = false, int targetNum = 0)
-		: body(body), x(x), y(y), dirx(dirx), diry(diry), score(score), lives(lives), winner(winner), targetNum(targetNum) {}
+		: body(body), x(x), y(y), dirx(dirx), diry(diry), score(score), lives(lives), isWinner(winner), targetNum(targetNum) {}
 
 	void setEquation(Equation *newEq) { eq = newEq; }
 	Equation* getEquation() { return eq; }
@@ -56,8 +56,8 @@ public:
 	void setDiry(int Diry) { diry = Diry; }
 	int getDirx() { return dirx; }
 	int getDiry() { return diry; }
-	void setWinner(bool winner) { winner = winner; }
-	bool getWinner() { return winner; }
+	void setWinner(bool winner) { isWinner = winner; }
+	bool getWinner() { return isWinner; }
 	void showPlayer(int x, int y);
 	void erasePlayer(int x, int y);
 	void changeDirection(char direction);
