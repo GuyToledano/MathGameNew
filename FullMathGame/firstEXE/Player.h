@@ -44,7 +44,7 @@ public:
 
 	void setEquation(Equation *newEq) { eq = newEq; }
 	Equation* getEquation() { return eq; }
-
+	void freeEquation(Equation *givenEq) { free(givenEq); }
 	void setLives(int newLives = 3) { lives = newLives; }
 	int getLives() { return lives; }
 
@@ -65,7 +65,7 @@ public:
 
 	void printlives(int x, int y);
 	int getScore() { return score; }
-	void setScore(int score) { score = score; }
+	void setScore(int newScore) { score = newScore; }
 	bool isPlayerStationary() { return (dirx == STAY && diry == STAY); }
 	int getTargetNum() { return targetNum; }
 	void setTargetNum(int newTargetNum) { targetNum = newTargetNum; }

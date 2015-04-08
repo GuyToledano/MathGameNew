@@ -21,6 +21,7 @@ void Player::erasePlayer(int x, int y)
 void Player::showPlayer(int x, int y)
 {
 	gotoxy(x, y);
+	setXY(x, y);
 	cout << this->body;
 }
 //this function gets a valid direction of the player and changes the movement of it

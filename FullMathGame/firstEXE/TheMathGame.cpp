@@ -15,9 +15,9 @@ using namespace std;
 void TheMathGame::showInstructions()const
 {
 	clear_screen();
-	//gotoxy(40, 10);
+	gotoxy(40, 10);
 	cout << "each player gets a math problem, ";
-	//gotoxy(20, 11);
+	gotoxy(20, 11);
 	cout << "use the following keys to move and collect the correct answer." << endl;
 	gotoxy(20, 5);
 	cout << "Player| #1:      |         #2:" << endl;
@@ -37,11 +37,22 @@ void TheMathGame::showInstructions()const
 }
 // virtual fucnction with =0 is called an "abstract method"
 // abstract method must be implemented by non-abstract inherited class
+TheMathGame::TheMathGame()
+{
+	this->player1 = Player('@', 10, 9, MOVE_RIGHT, STAY, 0, 3);
+	this->player2 = Player('#', 70, 9, MOVE_LEFT, STAY, 0, 3);
+	currentLevel = 0;
+}
 bool TheMathGame::isLevelDone()
 {
 	if (player1.getWinner() == true || player2.getWinner() == true)
+	{
 		return true;
-
+	}
+	else if (player1.getLives() == 0 && player2.getLives() == 0)
+	{
+		return true;
+	}
 	return false;
 }
 bool TheMathGame::hasNextLevel(const unsigned int currentLevel)const
@@ -56,19 +67,30 @@ void TheMathGame::startLevel(const unsigned int currentLevel)
 {
 	clear_screen();
 
-	this->player1 = Player('@', 10, 9, MOVE_RIGHT, STAY, 0, 3);
-	this->player2 = Player('#', 70, 9, MOVE_LEFT, STAY, 0, 3);
 	boardInit();
 	setEquations(currentLevel);
-
-	player1.setTargetNum(player1.getEquation()->getTargetNumber());
-	player2.setTargetNum(player1.getEquation()->getTargetNumber());
+	setWinnerStatus();
+	setLives();
+	setTargetNums();
 
 	printframe(currentLevel);
-
-	this->player1.showPlayer(10, 9);
-	this->player2.showPlayer(70, 9);
-
+	showPlayers();
+	setMovement();
+}
+void TheMathGame::setLives()
+{
+	player1.setLives();
+	player2.setLives();
+}
+void TheMathGame::setTargetNums()
+{
+	player1.setTargetNum(player1.getEquation()->getTargetNumber());
+	player2.setTargetNum(player2.getEquation()->getTargetNumber());
+}
+void TheMathGame::setWinnerStatus()
+{
+	player1.setWinner(false);
+	player2.setWinner(false);
 }
 void TheMathGame::setEquations(const unsigned int currentLevel)
 {
@@ -93,6 +115,62 @@ void TheMathGame::printframe(const unsigned int currentLevel)
 	for (int i = 0; i < 80; i++)
 		cout << "_";
 
+}
+void TheMathGame::showPlayers()
+{
+	this->player1.showPlayer(10, 9);
+	this->player2.showPlayer(70, 9);
+}
+void TheMathGame::setMovement()
+{
+	player1.setDirx(MOVE_RIGHT);
+	player1.setDiry(STAY);
+
+	player2.setDirx(MOVE_LEFT);
+	player2.setDiry(STAY);
+}
+
+//TODO: change the messages
+void TheMathGame::endLevel()
+{
+	clear_screen();
+
+
+	if (player1.getWinner() == true && player2.getWinner() == false)
+	{
+		gotoxy(37, 10);
+		cout << "Player1 won!!" << endl;
+		gotoxy(39, 11);
+		cout << "Good Job!!";
+	}
+	else if (player1.getWinner() == false && player2.getWinner() == true)
+	{
+		gotoxy(37, 10);
+		cout << "Player2 won!!" << endl;
+		gotoxy(39, 11);
+		cout << "Good Job!!";
+	}
+	else if (player1.getWinner() == true && player2.getWinner() == true)
+	{
+		gotoxy(37, 10);
+		cout << "Both Players won!!" << endl;
+		gotoxy(39, 11);
+		cout << "Good Job!!";
+	}
+	else
+	{
+		gotoxy(37, 10);
+		cout << "YOU STUPID FUCKS!!" << endl;
+		gotoxy(39, 11);
+		cout << "better luck next time...";
+	}
+	freeEquations();
+	Sleep(2000);
+}
+void TheMathGame::freeEquations()
+{
+	player1.freeEquation(player1.getEquation());
+	player2.freeEquation(player2.getEquation());
 }
 // get a list with keyHits and returns a list with the keys that were used
 void TheMathGame::doIteration(const list<char>& keyHits)
@@ -127,11 +205,14 @@ void TheMathGame::doIteration(const list<char>& keyHits)
 	didPlayersCollide();
 	playerGetsNumber(player1);
 	playerGetsNumber(player2);
+
+	if (isLevelDone())
+		endLevel();
+
 	this->player1.move();
 	this->player2.move();
 }
 
-//TODO: change the letters to defines
 int TheMathGame::assignToPlayer(char direction)
 {
 	switch (direction)   //switch to check whisch button was pressed
@@ -234,6 +315,7 @@ void TheMathGame::boardInit()
 			numberBoard[i][j] = EMPTY_CELL;
 	}
 }
+//TODO: check why it doesnt generate numbers in the right range
 short int TheMathGame::getRandomNumber()
 {
 	short int number;
@@ -350,11 +432,12 @@ void TheMathGame::playerGetsNumber(Player &p)
 {
 	if (isPlayerGetsNumber(p))
 	{
-		if (numberBoard[p.getX()][p.getY()] == p.getTargetNum())  // TODO: check if we can turn into a function
+		if (numberBoard[p.getX()][p.getY()] == p.getTargetNum())  // if the player collects the right number
 		{
 			p.setWinner(true);
 			removeNumberFromBoard(p.getX(), p.getY());
 			p.setScore(p.getScore() + 1);
+			currentLevel++;
 			printframe(currentLevel);
 		}
 		else
@@ -373,7 +456,7 @@ void TheMathGame::playerGetsNumber(Player &p)
 
 
 }
-//TODO: disable movement 
+
 void TheMathGame::removePlayerFromBoard(Player &p)
 {
 	p.setXY(OUT_OF_BOARD, OUT_OF_BOARD);
@@ -432,9 +515,7 @@ void TheMathGame::removeNumberFromBoard(int x, int y)
 	}
 	numberBoard[x + i][y] = EMPTY_CELL;
 }
-
-//TODO: to see why we arent winning when collecting the right number
-
+//this function gets a player, updates and print out its remaining lives
 void TheMathGame::updateLives(Player &p)
 {
 	p.setLives(p.getLives() - 1);

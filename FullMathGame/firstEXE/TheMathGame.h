@@ -38,18 +38,32 @@ private:
 	short int numberBoard[BOARD_WITDH][BOARD_HEIGHT];
 
 public:
+	TheMathGame();
 	virtual bool isLevelDone();
 	virtual bool hasNextLevel(const unsigned int currentLevel)const;
+
 	virtual void startLevel(const unsigned int currentLevel);
+	void setWinnerStatus();
+	void setLives();
+	void setEquations(const unsigned int currentLevel);
+	void setTargetNums();
 	void boardInit();
 	void printframe(const unsigned int currentLevel);
+	void showPlayers();
+	void setMovement();
+
+	void endLevel();
+	void freeEquations();
+	
 	virtual void doIteration(const list<char>& keyHits);
 	virtual void doSubIteration();
+
 	virtual void showInstructions()const;
-	void setEquations(const unsigned int currentLevel);
+
 	int assignToPlayer(char direction);
 	bool isValid(char direction);
 	void didPlayersCollide();
+
 	short int getRandomNumber();
 	void generateNumber();
 	virtual void setCurrentLevel(unsigned int currentLevel)  { currentLevel = currentLevel; }
