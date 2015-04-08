@@ -68,7 +68,7 @@ public:
 	void setScore(int score) { score = score; }
 	bool isPlayerStationary() { return (dirx == STAY && diry == STAY); }
 	int getTargetNum() { return targetNum; }
-	void setTargetNum(int targetNum) { targetNum = targetNum; }
+	void setTargetNum(int newTargetNum) { targetNum = newTargetNum; }
 
 };
 
